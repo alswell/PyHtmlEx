@@ -126,6 +126,19 @@ def code():
     f.close()
 
 
+def console():
+    f = open("remote_shell.py", 'r')
+    lines = f.readlines()
+    f.close()
+
+    body, styles = body_main(Console(lines))
+    head = lazy_head("console", styles)
+    f = open('console.html', 'w')
+    f.write('%s' % Html(head, body))
+    f.close()
+
+
 if __name__ == '__main__':
     resume()
     code()
+    console()

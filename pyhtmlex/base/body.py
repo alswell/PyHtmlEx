@@ -11,9 +11,10 @@ class Body(Element):
 class Div(Element):
     element_name = "div"
 
-    def __init__(self, cls_name):
+    def __init__(self, cls_name=None):
         super(Div, self).__init__()
-        self.attributes["class"] = cls_name
+        if cls_name:
+            self.attributes["class"] = cls_name
 
 
 class Span(Element):

@@ -114,20 +114,52 @@ python_key = [
     'break', 'except', 'in', 'raise', 'print']
 
 
+def get_words(line):
+    words = []
+    i = 0
+    while i < len(line):
+        start1 = line.find("'", i)
+        start2 = line.find('"', i)
+        if start1 == start2 == -1:
+            words.extend([(word + ' ') for word in line[i:].strip('\n').split(' ')])
+            words[-1] = words[-1].strip()
+            return words
+        if start1 == -1:
+            start1 = start2 + 1
+        if start2 == -1:
+            start2 = start1 + 1
+
+        if start1 < start2:
+            end = line.find("'", start1 + 1)
+            # print line[start1:end + 1]
+            words.extend([(word + ' ') for word in line[i:start1].strip('\n').split(' ')])
+            words[-1] = words[-1].strip()
+            words.append(line[start1:end + 1])
+        else:
+            end = line.find('"', start2 + 1)
+            # print line[start2:end + 1]
+            words.extend([(word + ' ') for word in line[i:start2].strip('\n').split(' ')])
+            words[-1] = words[-1].strip()
+            words.append(line[start2:end + 1])
+        i = end + 1
+
+
 class Code(Div):
     style = Style()
-    style.add_class("code", margin=0, overflow='auto')
+    style.add_class("code", margin=0, display='block', overflow='auto')
     style.add_class("code_line1", background="#ccc")
     style.add_class("code_line2", background="#aca")
     style.add_class("code_key", color="#00a", font_weight="bold")
     style.add_class("code_interpreter", color="#aaa", font_weight="bold")
     style.add_class("code_comment", color="#0a0", font_weight="bold")
     style.add_class("code_plain", color="#000")
+    style.add_class("code_str", color="#900")
 
     def __init__(self, lines):
         super(Code, self).__init__('code')
 
         pre = Pre()
+        pre.set_attributes(style='display:inline-block; *display:inline; *zoom:1;')
         ol = Ol()
         pre.push_back(ol)
         i = 0
@@ -135,17 +167,21 @@ class Code(Div):
         for line in lines:
             i = (i + 1) % 2
             li = Li(cls_name=cls_name[i])
-            if len(line) > 1 and line[:2] == '#!':
+            raw_line = line.strip()
+            if len(raw_line) > 1 and raw_line[:2] == '#!':
                 li.push_back(Span(line, 'code_interpreter'))
-            elif line[0] == '#' and line[1]:
+            elif len(raw_line) > 0 and raw_line[0] == '#':
                 li.push_back(Span(line, 'code_comment'))
             else:
-                words = line.strip('\n').split(' ')
+                # words = line.strip('\n').split(' ')
+                words = get_words(line)
                 for word in words:
-                    if word in python_key:
-                        li.push_back(Span(word + ' ', 'code_key'))
+                    if len(word) > 0 and (word[0] == '"' or word[0] == "'"):
+                        li.push_back(Span(word, 'code_str'))
+                    elif word in python_key:
+                        li.push_back(Span(word, 'code_key'))
                     else:
-                        li.push_back(Span(word + ' ', 'code_plain'))
+                        li.push_back(Span(word, 'code_plain'))
             ol.push_back(li)
         self.children.append(pre)
 
