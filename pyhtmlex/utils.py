@@ -178,7 +178,7 @@ class Code(Div):
                 for word in words:
                     if len(word) > 0 and (word[0] == '"' or word[0] == "'"):
                         li.push_back(Span(word, 'code_str'))
-                    elif word in python_key:
+                    elif word.strip() in python_key:
                         li.push_back(Span(word, 'code_key'))
                     else:
                         li.push_back(Span(word, 'code_plain'))
