@@ -97,21 +97,35 @@ class Resume(object):
         self.exp_index += 1
 
 
-def body_main():
+def body_main(content):
     body, style, left, right = body_factory([("/", "首页")])
 
-    right.push_back(Resume().form)
+    right.push_back(content)
 
-    style.append(Resume().form.style)
+    style.append(content.style)
     return body, style
 
 
 def resume():
-    body, styles = body_main()
-    head = lazy_head("my xhtml", styles)
+    body, styles = body_main(Resume().form)
+    head = lazy_head("resume", styles)
     f = open('resume.html', 'w')
     f.write('%s' % Html(head, body))
     f.close()
 
+
+def code():
+    f = open("remote_shell.py", 'r')
+    lines = f.readlines()
+    f.close()
+
+    body, styles = body_main(Code(lines))
+    head = lazy_head("code", styles)
+    f = open('code.html', 'w')
+    f.write('%s' % Html(head, body))
+    f.close()
+
+
 if __name__ == '__main__':
     resume()
+    code()
