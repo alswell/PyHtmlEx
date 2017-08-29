@@ -119,7 +119,7 @@ def code():
     lines = f.readlines()
     f.close()
 
-    body, styles = body_main(Code(lines))
+    body, styles = body_main(PythonCode(lines))
     head = lazy_head("code", styles)
     f = open('code.html', 'w')
     f.write('%s' % Html(head, body))
