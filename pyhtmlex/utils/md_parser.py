@@ -33,11 +33,11 @@ def md_parser(div, pathname, title):
                 line = line[index2:]
                 protocol = line.find('://')
 
-            p.push_back(Span(txt1, 'x'))
+            p.push_back(Span(txt1))
             p.push_back(A(link, link, True))
 
         if line:
-            p.push_back(Span(line, 'x'))
+            p.push_back(Span(line))
         return p
 
     class TxtPrint(object):
@@ -123,7 +123,7 @@ def md_parser(div, pathname, title):
             div.push_back(Li(line[2:]))
         else:
             title_cls = line.split(' ')[0]
-            if "######".find(title_cls) != -1:
+            if len(title_cls) != 0 and "######".find(title_cls) != -1:
                 len_title_cls = len(title_cls)
                 div.push_back(H(line[len_title_cls:], 7 - len_title_cls))
             else:

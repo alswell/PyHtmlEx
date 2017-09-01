@@ -14,6 +14,8 @@ class Console(Div):
         pre.push_back(ul)
         ul.set_attributes(style="list-style-type:none")
         for line in lines:
+            if line == '':
+                line = ' '
             script = Script(line)
             script.set_attributes(type='text/html', style="display:block")
             li = Li()
