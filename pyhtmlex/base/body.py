@@ -20,10 +20,11 @@ class Div(Element):
 class Span(Element):
     element_name = "span"
 
-    def __init__(self, txt, cls_name):
+    def __init__(self, txt, cls_name=None):
         super(Span, self).__init__()
         self.inner_html = txt
-        self.attributes["class"] = cls_name
+        if cls_name:
+            self.attributes["class"] = cls_name
 
 
 class Pre(Element):
@@ -33,6 +34,17 @@ class Pre(Element):
         super(Pre, self).__init__()
         if txt is not None:
             self.inner_html = txt
+
+
+class H(Element):
+    element_name = "h"
+
+    def __init__(self, txt, i=1):
+        super(H, self).__init__()
+        if i == 1:
+            self.attributes["align"] = "center"
+        self.element_name += "%s" % i
+        self.inner_html = txt
 
 
 class P(Element):
@@ -46,9 +58,11 @@ class P(Element):
 class A(Element):
     element_name = "a"
 
-    def __init__(self, href, txt=""):
+    def __init__(self, href, txt="", blank=False):
         super(A, self).__init__()
         self.attributes["href"] = href
+        if blank:
+            self.attributes["target"] = "_blank"
         self.inner_html = txt
 
 
@@ -63,17 +77,19 @@ class Img(EmptyElement):
 class Table(Element):
     element_name = "table"
 
-    def __init__(self, cls_name):
+    def __init__(self, cls_name=None):
         super(Table, self).__init__()
-        self.attributes["class"] = cls_name
+        if cls_name:
+            self.attributes["class"] = cls_name
 
 
 class Tr(Element):
     element_name = "tr"
 
-    def __init__(self, cls_name):
+    def __init__(self, cls_name=None):
         super(Tr, self).__init__()
-        self.attributes["class"] = cls_name
+        if cls_name:
+            self.attributes["class"] = cls_name
 
     def combine_col(self, beg, end):
         self.children[beg].attributes.pop('width')
