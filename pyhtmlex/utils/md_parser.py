@@ -128,4 +128,4 @@ def md_parser(div, pathname, title):
                 div.push_back(H(line[len_title_cls:], 7 - len_title_cls))
             else:
                 div.push_back(mk_p(line))
-    return md_style
+    return [Code.style, Console.style, md_style]
