@@ -1,0 +1,16 @@
+docker update
+docker-3. Horizon: http://10.240.205.162:8003/
+Backend: 10.100.208.79
+
+ssh 10.240.205.162
+User: sysadm
+Password: stack%devb0x
+
+```
+cd /home/sysadm/sds-gui-dev
+docker-compose stop horizon-3
+docker-compose rm horizon-3
+docker-compose up -d horizon-3
+docker logs -f sds-horizon-3
+```
+

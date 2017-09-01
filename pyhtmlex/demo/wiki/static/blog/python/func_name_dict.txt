@@ -1,0 +1,43 @@
+``` py
+def func():
+    pass
+
+func.__setattr__("test", 111)
+func.test2 = 222
+f = func
+print 'f.func_name:', f.func_name
+print 'f.func_dict', f.func_dict
+
+
+def enforce(fun):
+    def r(self, ctxt, *args, **kwargs):
+        print 'storagemgmt:%s:%s' % (self.__class__.__name__.lower(), fun.func_name), ctxt
+        return fun(self, ctxt, *args, **kwargs)
+    return r
+
+
+class Cluster(object):
+
+    @enforce
+    def get(self, ctxt, id):
+        print ctxt, "get", id
+
+    @enforce
+    def create(self, ctxt, *args, **kwargs):
+        print ctxt, args, kwargs
+
+
+ctxt = {'roles': ['admin', 'member']}
+cluster = Cluster()
+cluster.get(ctxt, 1)
+cluster.create(ctxt, "111", "222", aa=1)
+```
+
+```
+f.func_name: func
+f.func_dict {'test': 111, 'test2': 222}
+storagemgmt:cluster:get {'roles': ['admin', 'member']}
+{'roles': ['admin', 'member']} get 1
+storagemgmt:cluster:create {'roles': ['admin', 'member']}
+{'roles': ['admin', 'member']} ('111', '222') {'aa': 1}
+```

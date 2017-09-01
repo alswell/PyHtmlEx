@@ -1,0 +1,134 @@
+一. get fetch和git pull的区别
+git pull = git fetch + git merge
+
+做一个小实验：
+1. git fetch & git status
+git status 仍然会显示 "Your branch is behind 'xxx branch' by N commits"
+
+2. 断网
+将电脑网线拔掉或者将无线关闭。
+
+3. git merge & git status
+git merge 会显示merge的过程，而git status会显示当前已经是最新的代码。
+
+这个实验说明了：
+1. git fetch将远程服务器上的代码拉到了本地，但并不是本地的代码库里，而应该是本地的某个临时存储的区域，比如可能是.git文件夹（尚需求证）；
+2. git merge是将以上临时存储区域的代码合并到代码库。
+   当然，这其中可能会存在冲突，那就需要解决冲突。
+   
+有一种说法是git fetch比git pull更安全，就是因为在没有冲突的情况下是git pull会自动merge的而开发者可能没有察觉到。但是笔者似乎在用git pull的一直以来，都没有遇见过此种情况，因为如果开发者改变了本地的代码，而无论是commit了还是没有commit，就去运行git pull，印象中都是会有警告的。所以似乎并不存在这种更加安全的说法。如果是这样，那么git pull其实就没什么不好，反而更加方便易用了。
+
+二. git stash的作用
+git stash是一个比较有用的命令。当开发者开发到一半还没有commit的时候，突然意识到应该将代码pull下来再继续开发，那么这个时候就可以用git stash了。
+git stash将当前的改动保存到一个临时区域(stash)，在合适的实际再回放出来。看下面的一个常见case：
+1. git stash 或 git stash save
+这个命令将当前尚未commit的改动保存到临时区域(stash)。
+2. git pull
+将最新代码拉到本地。
+3. git stash apply
+将刚才存储到临时区域的改动再放进代码库里
+4. 如果有冲突，则解决冲突；若没有冲突，则可以继续开发了。
+
+常见的git stash的几个命令如下（以下只是简要介绍，更多细节还是要参见手册）：
+git stash list[<options>]
+列出当前的stashes. 每个stash都有名字，如：stash@{0}代表当前最新的stash，stash${1}代表前一个stash. 一个输出示例如下：
+stash@{0}: WIP on submit: 6ebd0e2... Update git-stash documentation
+stash@{1}: On master: 9cc0589... Add git-stash
+其中，"WIP on submit" 和 "On master"是这个stash所在的branch，而后面的内容是这个stash被创建时所基于的commit. 
+
+git stash show [<stash>]
+显示该stash和其所base的代码的不同之处，如git stash show -p stash@{1}显示第二新的stash和基本代码的差异。
+
+git stash pop [<stash>]
+将stash list里的一个指定的stash移除，并将其应用在当前代码上(apply it on top of the current working tree state, i.e. do the inverse operation of git stash save)。
+
+git stash apply [<stash>]
+和pop类似，但不会将stash从stash list移除。
+
+git stash clear
+删除所有的stash
+
+三. git rebase的作用
+git rebase [-i | --interactive] [options] [--exec <cmd>] [--onto <newbase>] [<upstream> [<branch>]]
+如果指定了<branch>，git rebase就会在做任何事情之前先自动执行git checkout <branch>；否则它将保持在当前的branch上。
+
+如果有冲突，那么解决了冲突之后再运行git rebase --continue. 另一个选择是绕过这这个有冲突的commit，即运行git rebase --skip. 而运行git rebase --abort的作用是checkout原来的branch并删除.git/rebase-apply下的相关文件，即放弃做rebase了。
+
+Case 1. 
+看图如下，并假设当前branch是topic
+```
+          A---B---C topic
+         /
+    D---E---F---G master
+```
+
+那么当运行如下2句命令的任何一句：
+git rebase master
+git rebase master topic = git checkout topic + git rebase master
+
+结果是：
+```
+                  A'--B'--C' topic
+                 /
+    D---E---F---G master
+```
+
+这是因为，rebase master的含义就是以master为主，来更新当前的branch，即更新topic. 那么，所有在topic上开发的commits就会以最新master的commit为基准，在其上重放topic上的commits，所以效果就是在master的G的后面又跟上了A，B，C. 
+
+如果upstream branch上已经有了一个当前branch上有的commit，那么该commit将被忽略。见下图：
+```
+          A---B---C topic
+         /
+    D---E---A'---F master
+```
+
+git rebase会生成：
+```
+                   B'---C' topic
+                  /
+    D---E---A'---F master
+```
+
+git rebase还有一种--onto的用法。见下图。
+```
+                            H---I---J topicB
+                           /
+                  E---F---G  topicA
+                 /
+    A---B---C---D  master
+```
+
+运行 git rebase --onto master topicA topicB 会生成：
+```
+                 H'--I'--J'  topicB
+                /
+                | E---F---G  topicA
+                |/
+    A---B---C---D  master
+```
+
+四. git merge
+那么git merge和git rebase又有什么不同呢？
+先看git merge做了什么。假设有如下的情形，并且当前的branch是master. 
+```
+      A---B---C topic
+     /
+    D---E---F---G master
+```
+
+那么在运行了git merge topic之后，会形成下图：
+```
+      A-----B-----C topic
+     /             \
+    D---E---F---G---H master
+```
+
+git merge topic会重放（replay）自topic branch偏离master以来的所有commits，即A、B、C. 
+
+反之，如果运行的是git rebase topic的话，就会以topic为主，将EFG放到C的后面作为master的commits，见下图。
+
+```
+                  E'--F'--G' master
+                 /
+    D---A---B---C topic
+```

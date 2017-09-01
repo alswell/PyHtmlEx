@@ -1,0 +1,26 @@
+``` cpp
+struct StTest
+{
+	int id;
+	int e;
+};
+
+bool mycmp(const StTest& st1, const StTest& st2)
+{
+	return st1.id > st2.id;
+}
+
+void tests::LazyTest()
+{
+	//CMatLab::Instance()->Figure(1);
+	//return;
+	//ElMath::DistanceP2Seg(CPointEx<float>(0, 0), CPointEx<float>(1, 1), CPointEx<float>(1,2));
+
+	list<StTest> ls;
+	ls.push_back({ 1, 100 });
+	ls.push_back({ 4, 400 });
+	ls.push_back({ 3, 300 });
+	ls.push_back({ 7, 700 });
+	ls.sort(mycmp);
+}
+```

@@ -1,0 +1,80 @@
+``` py
+class RemoteShell:
+    def __init__(self, host, user, pwd):
+        self.host = host
+        self.user  = user
+        self.pwd  = pwd
+
+    def put(self, local_path, remote_path):
+        scp_put = '''
+#!/usr/bin/expect
+set timeout -1
+spawn scp %s %s@%s:%s
+expect {
+ "(yes/no)?"
+  {
+  send "yes\n"
+  expect "*assword:" { send "%s\n"}
+ }
+ "*assword:"
+{
+ send "%s\n"
+}
+}
+expect "100%%"
+expect eof
+exit'''
+        #Avoid offending key with old record
+        os.system("sed -i '/^%s/d' /root/.ssh/known_hosts" % self.host)
+        os.system("echo '%s' > scp_put.cmd" % (scp_put % (os.path.expanduser(local_path), self.user, self.host, remote_path, self.pwd, self.pwd)))
+        os.system('expect scp_put.cmd')
+        os.system('rm scp_put.cmd')
+
+    def get(self, remote_path, local_path):
+        scp_get = '''
+#!/usr/bin/expect
+set timeout -1
+spawn scp %s@%s:%s %s
+expect {
+ "(yes/no)?"
+  {
+  send "yes\n"
+  expect "*assword:" { send "%s\n"}
+ }
+ "*assword:"
+{
+ send "%s\n"
+}
+}
+expect "100%%"
+expect eof
+exit'''
+        os.system("echo '%s' > scp_put.cmd" % (scp_get % (self.user, self.host, remote_path, os.path.expanduser(local_path), self.pwd, self.pwd)))
+        os.system('expect scp_put.cmd')
+        os.system('rm scp_put.cmd')
+
+    def execute(self, cmd):
+        ssh_execute = '''
+#!/usr/bin/expect
+set timeout -1
+spawn ssh %s@%s %s
+expect {
+"(yes/no)?"
+{
+send "yes\n"
+expect "*assword:" { send "%s\n"}
+}
+"*assword:"
+{
+send "%s\n"
+}
+}
+expect eof
+exit'''
+        os.system("echo '%s' > ssh_execute.cmd" % (ssh_execute % (self.user, self.host, cmd, self.pwd, self.pwd)))
+        os.system('expect ssh_execute.cmd')
+        os.system('rm ssh_execute.cmd')
+
+# a = RemoteShell(host="10.20.0.10", user="root", pwd="lenovo")
+# a.put("/tmp/InstallCeph-suse12.tar.gz","/tmp/InstallCeph-suse12.tar.gz")
+```

@@ -1,0 +1,15 @@
+``` py
+cls = type("myCls", (object,), {"aa": 11})
+print cls
+obj = cls()
+print obj
+print dir(obj)
+print obj.aa
+```
+
+```
+<class '__main__.myCls'>
+<__main__.myCls object at 0x0000000000BFD438>
+['__class__', '__delattr__', '__dict__', '__doc__', '__format__', '__getattribute__', '__hash__', '__init__', '__module__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', 'aa']
+11
+```

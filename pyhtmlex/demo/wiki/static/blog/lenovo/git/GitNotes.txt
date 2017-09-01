@@ -1,0 +1,302 @@
+###### Git Nodes
+--------------------
+## One example
+--------------------
+```
+git config --global user.name "FinixLei"
+git config --global user.email "finixlei@gmail.com"
+
+# create a new repository on the command line
+touch README.md
+git init
+git add README.md
+git commit -m "first commit"
+git remote add origin https://github.com/FinixLei/GitR1.git
+git push -u origin master
+
+# Push an existing repository from the command line
+git remote add origin https://github.com/FinixLei/GitR1.git
+git push -u origin master
+
+# Search a project, and click "Fork" on webpage of GitHub first. 
+git clone https://github.com/FinixLei/Spoon-Knife.git
+```
+------------------------
+### Basic Commands
+------------------------
+
+```
+git help <command>
+```
+
+```
+## 取得项目的Git仓库
+   # 1) 为工作目录创建新仓库
+   git init 
+   git add .
+   git commit
+
+   # 2) 从现有仓库clone一个仓库到本地
+   git clone [url] [my-defined-name]
+     # 比如，git clone git://github.com/schacon/grit.git
+     # 这会在当前目录下创建出一个grit目录，其中包含一个.git子目录
+     # 第二个参数 my-defined-name 可选，用来定义本地的项目目录名称
+```
+
+```
+## 检查当前文件状态
+  git status
+```
+
+```
+## stage已修改的文件
+  git add 
+```
+
+```
+## 查看文件差异
+  git diff                               # 查看 modified文件 和 staging文件 的差异
+  git diff --cached 或 git diff --staged # 查看 staging 文件 和 commit 文件 的差异
+  git diff my_branch master -- file_name # 查看 特定文件在不同branch之间的差异
+```
+
+```
+## 配置
+  git config --global user.name "FinixLei"
+  git config --global user.email "finixlei@gmail.com"
+  git config --list
+```
+
+```
+## 提交
+  git commit -a # 对所有已经跟踪过的文件自动stage，然后再一并提交，从而跳过 git add 步骤
+                # 注意，不会对从未运行过“git add”的文件进行自动stage
+```
+
+```
+## 删除文件
+  git rm <file> # 先把想删除的文件物理删除，然后运行此命令，最后commit，即可删除文件。
+                # 如果删除之前修改过且已存在staging区域的话，则必须要用强制删除选项-f，以防误删除文件后丢失修改的内容。
+              
+  git rm --cached <file>    # 将文件从staging区域移除（因为之前将其忘记加入.gitignore文件），但并不从工作目录中移除。
+                            # 最后再将此类文件加入.gitignore
+                            # 比如，编译过程中的.o文件
+```
+
+```
+## 移动文件
+  git mv file_from file_to  # 修改文件名 (实际上本命令相当于3条命令：mv + git rm + git add)
+```
+
+```
+## 查看历史
+  git log
+  git log -p -2 # -p 显示每次commit的内容差异，-2 显示最近2次更新
+          --word-diff   # 显示单词层面的变化
+          --stat        # 显示简要的增改行数统计
+```
+
+```
+## 图形化工具
+  gitk
+```
+
+```
+## 撤销操作
+  # 1) 撤销commit操作
+    git commit --amend # 此命令将使用当前的staging区域快照提交。
+                       # 如果刚才提交完没有作任何改动，直接运行此命令的话，相当于有机会重新编辑提交说明。
+  
+    # 如果刚才提交时忘了暂存某些修改，可以先补上暂存操作，然后再运行 --amend 提交：
+    $ git commit -m 'initial commit'
+    $ git add forgotten_file
+    $ git commit --amend
+    # 以上3条命令其实只做了一次commit
+
+  # 2) 撤销stage操作
+    比如，不小心运行了 git add . 使得当前文件夹下所有文件都被添加到了staging区域，若要取消，运行下面的命令：
+    git reset HEAD <file> 
+    可将<file>从staging区域移出。
+
+  # 3) 撤销modify操作
+    git checkout -- <file>  # <file>将恢复为上次commit时的版本
+```
+
+```
+## 远程仓库
+  # 1) 查看当前的远程仓库
+    git remote      # 列出每个远程库的简短名字
+    git remote -v   # 显示对应的clone地址
+                    # 注意，只有显示为SSH URL的，才有权限push数据上去
+
+    git clone git://github.com/schacon/ticgit.git
+    在克隆完某个项目后，至少可以看到一个名为 origin 的远程库，Git 默认使用这个名字来标识你所克隆的原始仓库。
+  
+  # 2) 添加远程仓库
+    git remote add [shortname] [url]  # 添加一个远程仓库
+  
+  # 3) 从远程仓库抓取数据
+    git fetch [remote-name]  # 抓取remote-name远程仓库上有而本地仓库没有的信息
+                             # fetch 命令只是将远端的数据拉到本地仓库，并不做自动合并的工作，只有当确实准备好了，才能手工合并。
+
+    git pull 
+      # 如果设置了某个branch用于跟踪某个远端仓库的branch（参见下节及第三章的内容），可以使用 git pull  命令，它会自动抓取数据下来，并将远端branch自动合并到本地仓库中当前branch。
+  
+      # 实际上，默认情况下 git clone 命令本质上就是自动创建了本地的 master 分支用于跟踪远程仓库中的 master 分支（假设远程仓库确实有 master 分支）。
+      # 一般我们运行 git pull，目的都是要从原始克隆的远端仓库中抓取数据后，合并到工作目录中的当前分支。
+  
+  # 4) push数据到远程仓库
+    git push [remote-name] [branch-name]  # 比如，git push origin master
+                                          # 如果在你推数据前，已经有其他人推送了若干更新，那你的推送操作就会被驳回；
+                                          # 你必须先把他们的更新抓取到本地，合并到自己的项目中，然后才可以再次推送。
+  
+    git push origin <local_branch_name>:<remote_branch_name>
+  
+  # 5) 查看远程仓库的信息
+    git remote show [remote-name]  # 比如： git remote show origin
+  
+  # 6) 远程仓库的删除和重命名
+    git remote rename <old-name> <new-name>
+    git remote rm <remote-name>
+```
+
+```
+## 打 tag （标签）
+  # 1) 列出已有的tag
+    git tag
+    git tag -l 'v1.4.2.*'
+    
+  # 2) 新建tag
+  # Git 使用的标签有两种类型：轻量级的（lightweight）和含附注的（annotated）。
+  # 轻量级标签就像是个不会变化的分支，实际上它就是个指向特定提交对象的引用。
+  # 含附注标签，实际上是存储在仓库中的一个独立对象，它有自身的校验和信息，包含着标签的名字，电子邮件地址和日期，以及标签说明，标签本身也允许使用 GNU Privacy Guard (GPG) 来签署或验证。
+  # 一般我们都建议使用含附注型的标签，以便保留相关信息
+  
+  git tag -a v1.4 -m 'my version 1.4'   # -a 表示annotated
+  git show v1.4 # 查看相应标签的版本信息
+```
+
+-----------------------------
+### Brach
+-----------------------------
+
+Git 中的分支，其实本质上仅仅是个指向 commit 对象的可变指针。（3.1节解释很清楚）
+Git 是如何知道你当前在哪个分支上工作的呢？其实答案也很简单，它保存着一个名为 HEAD 的特别指针。
+在 Git 中，它是一个指向你正在工作中的本地分支的指针（将 HEAD 想象为当前分支的别名）。
+
+```
+## git branch 命令
+  # 1) git branch       # 没有参数，列出所有branch
+       git branch -v    # 查看各个branch最后一次commit的信息；前面有*的分支是当前分支
+       
+       git branch --merged  # 查看哪些branch已经被并入了当前的branch；
+                            # 一般来说，这里列出的非当前分支都可以被删除。
+                            
+       git branch --no-merged   # 查看尚未合并到当前分支的其他分支
+       
+       git branch -a    # 列出所有分支
+  
+  # 2) git branch <branch-name>     # 创建新branch （添加个指针而已）
+  
+  # 3) git branch -d <branch-name>  # 删除branch （其实就是删除那个指针）
+       git branch -D <branch-name>  # 一般来说，还没合并过来的分支不该被删除 (用 git branch --no-merged 查看)，但假若真的想删除，就用-D选项强制删除。
+       
+       以上是删除本地branch，以下是删除远程的branch
+       git push --delete <branch name>
+```
+
+```
+## 切换到其他branch
+  git checkout <other-branch>       # 切换到其他branch  
+  git checkout -b <other-branch>    # 新建并切换到该branch. -b的作用就是新建branch. 
+                                    # 相当于2条命令：git branch <other-branch> + git checkout <other-branch>
+```
+
+```
+## 合并branch
+  git merge <branch-name>   # 若在branch A上，运行 git merge B, 表示将branch B的内容merge到branch A上
+                            # 实质上是生成一个 A 和 B 的共同后代，再将A的指针指向它，仍表示branch A. 
+```
+
+```
+## 解决merge时的冲突
+  # 1) git status 可以用来查阅哪些文件冲突了
+  
+  # 2) 手动解决冲突后，用 git add 将其标明为resolved状态
+  
+  # 3) 解决冲突的图形工具
+       git mergetool    # 可以自己指定工具，参见 git help config
+```
+
+```
+## 远程分支 （remote branch）
+  # 以下用 <remote repository>/<remote branch> 来表示远程分支
+  # 其实质是一个在本地无法移动的指针
+   
+  # 1) 同步远程服务器上的数据到本地
+    git fetch <remote repository>
+     
+  # 2) push本地分支
+    git push <remote repository> <local branch>    
+      # 比如：     git push origin serverfix
+      # 也可写作： git push origin serverfix:serverfix 含义是：将本地的serverfix分支上传到远程仓库中并仍命名为serverfix
+      # 所以，也可写作： git push origin serverfix:remote_serverfix 这样就是上传后在远程仓库中将该分支重命名为remote_serverfix了
+        
+  # 3) 在远程分支的基础上分化出新的本地分支
+    git checkout -b <local branch> <remote repository>/<remote branch>
+    
+    # 若这里的local branch的名字和remote branch的名字相同，以上命令还可以简化为：
+    # git checkout --track <remote repository>/<remote branch>
+    
+    # 这里的 <local branch> 又被称为跟踪分支（tracking branch），是一种和远程分支有直接联系的本地分支。
+    # 在跟踪分支里输入git push，Git会自动判断该往哪个服务器的哪个分支推送数据。
+    # 同样，在跟踪分支里运行git pull，Git会自动获取对应的远程分支里的最新数据，并自动合并到该跟踪分支。
+    
+    # 所以，默认的git clone命令是自动创建了一个名为 master 的分支来跟踪 origin/master. 这就是 git push 和 git pull 一开始就能正常工作的原因。
+
+  # 4) 删除远程分支
+    git push <remote repository> :<remote branch>
+      # 本来冒号左边若写 <local branch> ，则相当于把本地分支推送到远程分支上；
+      # 但现在什么都不写，正相当于本地分支为空，即推送空到远程分支，也就是删除远程分支了。
+```
+
+```
+## branch 的 rebase
+
+   git checkout experiment
+   git rebase master 
+     # 回到2个分支最近的共同祖先，根据当前分支experiment后续的历次提交对象，生成一系列补丁；
+     # 然后对基底分支（这里即master）的最后一个commit对象应用所有补丁，最后生成一个新的合并对象；
+     # 这样也就改写了experiment的提交历史，使其成为了master分支的直接下游。（见3.6节的图示）
+     
+     # 请注意，合并结果中最后一次提交所指向的快照，无论是通过rebase，还是三方merge，都会得到相同的快照内容，只不过提交历史不同罢了。
+     # rebase是按照每行的修改次序重演一遍修改，而merge是把最终结果合在一起。
+   
+   git rebase <main branch> [feature branch]
+     # 先取出feature branch，然后在main branch上重演
+     
+   # 戒律：一旦分支中的提交对象发布到了公共仓库，就不要再对该分支进行rebase操作。
+```
+
+--------------------------------------
+
+# 检查<file>文件的start_num到end_num的改动log
+git blame <file> -L <start_num>, <end_num>
+
+---------------------------------------
+
+将已有的code上传到GitHub的新的Repository里：
+1. 在GitHub上新建一个Repository，取得其地址，如：https://github.com/FinixLei/LearnJava.git
+2. 在本地已有code的根目录下，运行git init
+3. 接着创建.gitignore文件并编辑，比如加入：bin (文件夹) 或 *.class (代表忽略所有.class文件)
+4. git add, git commit
+5. git remote add origin https://github.com/FinixLei/LearnJava.git
+   这样就将本地repository和远程的repository关联起来了
+6. git push origin master
+
+---------------------------------------
+
+git pull = git fetch + git merge
+git fetch 是从远程server将代码拉到本地，应该是本地的.git目录
+git merge 是将本地.git目录里拉下来的代码合到本地的branch上
+所以，做git fetch的时候必须要网络良好，但是做git merge的时候就不需要网络了，因为已经拉到本地了。

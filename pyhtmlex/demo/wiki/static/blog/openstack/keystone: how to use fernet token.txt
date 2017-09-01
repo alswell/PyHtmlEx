@@ -1,0 +1,48 @@
+- 使用fernet token 方法：
+- 参考：
+=== http://blog.csdn.net/quqi99/article/details/52373086 Fernet Token in Keystone v3 (by quqi99)
+1)	修改keystone配置文件/etc/keystone/keystone.conf . 把provider配置为fernet .
+```
+[token]
+provider=fernet
+```
+
+我们尝试登陆10.20.10.4，先重启keystone服务
+```
+# systemctl restart openstack-keystone
+```
+再登陆网址，发现无法登陆，登陆出错。还需要创建fernet-keys
+2)	创建fernet-keys
+在配置文件/etc/keystone/keystone.conf中有这样一段：
+```
+[fernet_tokens]
+key_repository=/etc/keystone/fernet-keys
+```
+所以需要创建/etc/keystone/fernet-keys
+
+创建操作：
+```
+# mkdir -p /etc/keystone/fernet-keys
+# chown -R keystone:keystone /etc/keystone/fernet-keys
+# keystone-manage fernet_setup --keystone-user keystone --keystone-group keystone
+```
+
+创建好了，重启keystone服务，我们就可以使用fernet token了。
+```
+# systemctl restart openstack-keystone
+```
+
+再进入10.20.10.4网址，登陆看看，发现可以登陆了。
+
+查看创建好的fernet-keys
+```
+[root@node-1 ~]# ls /etc/keystone/
+default_catalog.templates  fernet-keys  keystone.conf  keystone-paste.ini  logging.conf  policy.json  sso_callback_template.html
+[root@node-1 ~]# ls /etc/keystone/fernet-keys/
+0  1
+[root@node-1 ~]# cat /etc/keystone/fernet-keys/0
+_H2mfjdy9uB6eAA_RF87SBeKUEBj-uqgHiQTC4kKF5s=[root@node-1 ~]#
+[root@node-1 ~]# cat /etc/keystone/fernet-keys/1
+dYb2zIyD88oLxMYAc_sU5ANq4wpPCcbGF-FjV2TQ50k=[root@node-1 ~]#
+[root@node-1 ~]#
+```
