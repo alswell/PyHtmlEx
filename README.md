@@ -7,6 +7,7 @@ python main.py
 ```
 Then, a html file will be generated under directory "pyhtmlex/demo", just open it with your browser!
 - You can just open "pyhtmlex/demo/code.html" to see result as well.
+![code](static/img/code.png)
 * * *
 You can also use this lib with Django, the member function "generate" will "yield" the html content:
 ```
