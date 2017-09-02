@@ -4,14 +4,12 @@ from pyhtmlex.base.root import *
 from body import *
 
 
-
 def body_main():
     body, style, left, right = body_factory([("/", "首页")])
 
     right_style = md_parser(right, os.path.join(os.path.dirname(__file__)), 'readme')
     style.extend(right_style)
 
-    style.append(Resume().form.style)
     return body, style
 
 
