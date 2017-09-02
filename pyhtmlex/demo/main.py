@@ -23,9 +23,9 @@ def code():
 
     body, styles = body_main(PythonCode(lines))
     head = lazy_head("code", styles)
-    f = open('code.html', 'w')
-    f.write('%s' % Html(head, body))
-    f.close()
+
+    with open('code.html', 'w') as f:
+        f.write('%s' % Html(head, body))
 
 
 def console():
@@ -34,9 +34,9 @@ def console():
 
     body, styles = body_main(Console(lines))
     head = lazy_head("console", styles)
-    f = open('console.html', 'w')
-    f.write('%s' % Html(head, body))
-    f.close()
+
+    with open('console.html', 'w') as f:
+        f.write('%s' % Html(head, body))
 
 
 if __name__ == '__main__':

@@ -6,11 +6,22 @@ cd pyhtmlex/demo
 python main.py
 ```
 Then, a html file will be generated under directory "pyhtmlex/demo", just open it with your browser!
-- You can just open "pyhtmlex/demo/resume.html" and "pyhtmlex/demo/code.html" to see result as well.
+- You can just open "pyhtmlex/demo/code.html" to see result as well.
 * * *
 You can also use this lib with Django, the member function "generate" will "yield" the html content:
 ```
+from base.root import Html
+from pyhtmlex.utils import lazy_head
+from wiki.wiki.body import body_factory
 from django.http import StreamingHttpResponse
+
+def body_main(content):
+    body, style, left, right = body_factory([("/", "首页")])
+
+    right.push_back(content)
+
+    style.append(content.style)
+    return body, style
 
 def main(request):
     body, styles = body_main()
@@ -19,7 +30,7 @@ def main(request):
 
 ```
 
-#### How to Start a Personal Wiki:
+#### How to Start a Personal Wiki(A project based on PyHtmlEx):
 
 ```
 # pip install Django==1.11.3
