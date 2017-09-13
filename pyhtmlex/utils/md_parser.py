@@ -6,7 +6,8 @@ from console import *
 def md_parser(div, pathname, title):
     def check_encoding(lines):
         for line in lines:
-            if len(line) > 0 and line[0] not in ['$', '@', '#']:
+            line = line.rstrip()
+            if len(line) > 0 : #and line[0] not in ['$', '@', '#']:
                 encoding = chardet.detect(line)['encoding']
                 print 'encoding:', encoding
                 return encoding
@@ -75,7 +76,7 @@ def md_parser(div, pathname, title):
                 return Console(f.readlines())
 
     md_style = Style()
-    md_style.add_class("split_line", width='100%', height=2, background='#999', margin_bottom=10)
+    md_style.add_class("split_line", width='100%', height=2, background='#999', margin_top=10, margin_bottom=10)
 
     f = open(pathname + '/' + title + '.txt', 'r')
     contents = f.readlines()

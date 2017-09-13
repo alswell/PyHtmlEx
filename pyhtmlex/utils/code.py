@@ -52,10 +52,14 @@ class PythonCode(Code):
         raw_line = lines[0].strip()
         if len(raw_line) > 1 and raw_line[:2] == '#!':
             li = Li(cls_name=cls_name[beg])
-            li.push_back(Span(line, 'code_interpreter'))
+            raw_line = raw_line.replace('<', '&lt')
+            raw_line = raw_line.replace('>', '&gt')
+            li.push_back(Span(raw_line, 'code_interpreter'))
             beg = 1
         for i in range(beg, len(lines)):
             line = lines[i]
+            line = line.replace('<', '&lt')
+            line = line.replace('>', '&gt')
             li = Li(cls_name=cls_name[i % 2])
 
             multi_line_txt_index = line.find("'''")
@@ -136,6 +140,8 @@ class CppCode(Code):
         multi_line_txt = 0
         for i in range(len(lines)):
             line = lines[i]
+            line = line.replace('<', '&lt')
+            line = line.replace('>', '&gt')
             li = Li(cls_name=cls_name[i % 2])
 
             if multi_line_txt:

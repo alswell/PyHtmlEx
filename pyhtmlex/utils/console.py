@@ -16,9 +16,10 @@ class Console(Div):
         for line in lines:
             if line == '':
                 line = ' '
-            script = Script(line)
-            script.set_attributes(type='text/html', style="display:block")
+            else:
+                line = line.replace('<', '&lt')
+                line = line.replace('>', '&gt')
             li = Li()
-            li.push_back(script)
+            li.push_back(Span(line))
             ul.push_back(li)
         self.children.append(pre)
