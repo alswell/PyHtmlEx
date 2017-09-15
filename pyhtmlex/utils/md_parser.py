@@ -126,7 +126,7 @@ def md_parser(div, pathname, title):
             title_cls = line.split(' ')[0]
             if len(title_cls) != 0 and "######".find(title_cls) != -1:
                 len_title_cls = len(title_cls)
-                div.push_back(H(line[len_title_cls:], 7 - len_title_cls))
+                div.push_back(H(line[len_title_cls:], len_title_cls))
             else:
                 div.push_back(mk_p(line))
     return [Code.style, Console.style, md_style]
