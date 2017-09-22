@@ -3,14 +3,12 @@ from code import *
 from console import *
 
 
-def md_parser(div, pathname, title):
-    def check_encoding(lines):
-        for line in lines:
-            line = line.rstrip()
-            if len(line) > 0 : #and line[0] not in ['$', '@', '#']:
-                encoding = chardet.detect(line)['encoding']
-                print 'encoding:', encoding
-                return encoding
+def md_parser(div, pathname, fname):
+    def check_encoding(filepath):
+        with open(filepath, 'r') as f:
+            encoding = chardet.detect(f.read())['encoding']
+            print 'encoding:', encoding
+            return encoding
 
     def mk_p(line):
         protocol = line.find('://')
@@ -78,11 +76,10 @@ def md_parser(div, pathname, title):
     md_style = Style()
     md_style.add_class("split_line", width='100%', height=2, background='#999', margin_top=10, margin_bottom=10)
 
-    f = open(pathname + '/' + title + '.txt', 'r')
+    f = open(pathname + '/' + fname, 'r')
     contents = f.readlines()
     f.close()
-
-    if check_encoding(contents) == 'ascii':
+    if check_encoding(pathname + '/' + fname) not in ['ascii', 'utf-8']:
         for i in range(len(contents)):
             contents[i] = contents[i].decode('GBK')
 
